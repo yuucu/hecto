@@ -102,6 +102,10 @@ impl Editor {
         let pressed_key = Terminal::read_key()?;
         match pressed_key {
             Key::Ctrl('q') => self.should_quit = true,
+            Key::Char('x') | Key::Delete => {
+                self.document.delete(&self.cursor_position);
+                self.move_cursor(Key::Char('h'));
+            }
             Key::Char('h')
             | Key::Char('j')
             | Key::Char('k')
@@ -110,6 +114,10 @@ impl Editor {
             | Key::Ctrl('d')
             | Key::End
             | Key::Home => self.move_cursor(pressed_key),
+            Key::Char(c) => {
+                self.document.insert(&self.cursor_position, c);
+                self.move_cursor(Key::Char('l'));
+            }
             _ => println!("{:?} \r", pressed_key),
         }
         self.scroll();
